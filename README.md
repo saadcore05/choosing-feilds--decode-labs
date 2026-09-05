@@ -1,3 +1,4 @@
+# 🎯 Decode Lab Task 3
 # 🎯 Tech Stack Recommender — AI Recommendation Engine
 
 An AI-driven content-based recommendation system that matches a user's technical and creative skillset to the most relevant job roles using **TF-IDF (Term Frequency–Inverse Document Frequency)** and **Cosine Similarity**.
