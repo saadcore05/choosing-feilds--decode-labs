@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Stack Recommender — DecodeLabs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDEEE4;
+    --paper-line:#C9CDBB;
+    --ink:#1B2A4A;
+    --ink-soft:#4A5878;
+    --blue:#2F5FA8;
+    --blue-dim:#8FA9CC;
+    --amber:#C97A24;
+    --white:#FBFBF7;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      linear-gradient(var(--paper-line) 1px, transparent 1px) 0 0/32px 32px,
+      linear-gradient(90deg, var(--paper-line) 1px, transparent 1px) 0 0/32px 32px,
+      var(--paper);
+    background-blend-mode:multiply, multiply, normal;
+    opacity:1;
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    padding:48px 24px 80px;
+  }
+  .sheet{
+    max-width:920px;
+    margin:0 auto;
+    background:var(--white);
+    border:1.5px solid var(--ink);
+    box-shadow:6px 6px 0 rgba(27,42,74,0.12);
+  }
+  .sheet-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    border-bottom:1.5px solid var(--ink);
+    padding:22px 28px;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  .mark{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    letter-spacing:0.02em;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:34px;
+    line-height:1.05;
+    margin:6px 0 0;
+    color:var(--ink);
+  }
+  .doc-id{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    text-align:right;
+    line-height:1.6;
+  }
+
+  .intro{
+    padding:26px 28px 8px;
+    max-width:62ch;
+    color:var(--ink-soft);
+    font-size:15px;
+    line-height:1.55;
+  }
+
+  .body-grid{
+    display:grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap:0;
+    border-top:1px solid var(--paper-line);
+  }
+  @media (max-width:720px){ .body-grid{grid-template-columns:1fr;} }
+
+  .panel{padding:26px 28px;}
+  .panel + .panel{border-left:1px solid var(--paper-line);}
+  @media (max-width:720px){ .panel + .panel{border-left:none; border-top:1px solid var(--paper-line);} }
+
+  .panel-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--blue);
+    margin-bottom:14px;
+  }
+
+  .skill-input-row{
+    display:flex;
+    gap:8px;
+    margin-bottom:12px;
+  }
+  input[type=text]{
+    flex:1;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:14px;
+    padding:10px 12px;
+    border:1.5px solid var(--ink);
+    background:var(--paper);
+    color:var(--ink);
+  }
+  input[type=text]:focus{outline:2px solid var(--blue); outline-offset:1px;}
+  button{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    cursor:pointer;
+    border:1.5px solid var(--ink);
+    background:var(--ink);
+    color:var(--white);
+    padding:0 16px;
+  }
+  button:hover{background:var(--blue); border-color:var(--blue);}
+  button.ghost{
+    background:transparent;
+    color:var(--ink);
+  }
+  button.ghost:hover{background:var(--paper); color:var(--ink);}
+
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    min-height:38px;
+    margin-bottom:18px;
+  }
+  .chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    background:var(--paper);
+    border:1px solid var(--ink);
+    padding:5px 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .chip button{
+    all:unset;
+    cursor:pointer;
+    color:var(--ink-soft);
+    font-size:13px;
+    line-height:1;
+  }
+  .chip button:hover{color:var(--amber);}
+
+  .hint{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-bottom:18px;
+  }
+
+  .run-btn{
+    width:100%;
+    padding:13px;
+    font-size:13px;
+    letter-spacing:0.03em;
+  }
+
+  .stage-list{
+    list-style:none;
+    margin:0 0 4px;
+    padding:0;
+    counter-reset:stage;
+  }
+  .stage-list li{
+    counter-increment:stage;
+    display:flex;
+    gap:12px;
+    padding:9px 0;
+    border-top:1px dashed var(--paper-line);
+    font-size:13px;
+    color:var(--ink-soft);
+    align-items:baseline;
+    transition:color .2s;
+  }
+  .stage-list li:first-child{border-top:none;}
+  .stage-list li::before{
+    content:counter(stage);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--blue-dim);
+    border:1px solid var(--blue-dim);
+    width:18px;height:18px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .stage-list li strong{color:var(--ink); font-weight:600;}
+  .stage-list li.active{color:var(--ink);}
+  .stage-list li.active::before{border-color:var(--amber); color:var(--amber);}
+
+  .results{margin-top:6px;}
+  .result-row{
+    padding:16px 0;
+    border-top:1px solid var(--paper-line);
+  }
+  .result-row:first-child{
+    border-top:none;
+  }
+  .result-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:10px;
+  }
+  .result-rank{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--blue-dim);
+    margin-right:8px;
+  }
+  .result-role{
+    font-family:'Fraunces', serif;
+    font-size:19px;
+    font-weight:600;
+  }
+  .result-score{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    color:var(--amber);
+    white-space:nowrap;
+  }
+  .bar-track{
+    height:6px;
+    background:var(--paper);
+    border:1px solid var(--paper-line);
+    margin:8px 0 8px;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    background:var(--blue);
+    width:0%;
+    transition:width .5s ease;
+  }
+  .result-skills{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    line-height:1.5;
+  }
+  .result-skills mark{
+    background:none;
+    color:var(--ink);
+    font-weight:600;
+    border-bottom:1.5px solid var(--amber);
+  }
+
+  .empty-state{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    padding:18px 0;
+    border-top:1px dashed var(--paper-line);
+  }
+
+  .footer-strip{
+    border-top:1.5px solid var(--ink);
+    padding:14px 28px;
+    display:flex;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    flex-wrap:wrap;
+    gap:8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <div class="sheet-header">
+    <div>
+      <div class="mark">DECODELABS / AI TRACK</div>
+      <h1>Tech Stack Recommender</h1>
+    </div>
+    <div class="doc-id">
+      PROJECT 03 — REV B<br>
+      CONTENT-BASED FILTERING
+    </div>
+  </div>
+
+  <div class="intro">
+    Enter three or more skills. The engine maps them into the same TF-IDF
+    vocabulary as the role dataset, scores every role by cosine similarity,
+    and returns the three closest matches by angular alignment — not by
+    raw keyword overlap.
+  </div>
+
+  <div class="body-grid">
+    <div class="panel">
+      <div class="panel-label">01 — INPUT SKILLS</div>
+
+      <div class="skill-input-row">
+        <input type="text" id="skillInput" placeholder="e.g. Python" maxlength="30">
+        <button id="addBtn">ADD</button>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="hint" id="hint">Add at least 3 skills to run a match.</div>
+
+      <button class="run-btn" id="runBtn" disabled>RUN MATCH</button>
+
+      <div class="panel-label" style="margin-top:30px;">PIPELINE</div>
+      <ul class="stage-list" id="stageList">
+        <li id="stage1"><span>Ingest — capture skill vector</span></li>
+        <li id="stage2"><span>Score — TF-IDF · cosine similarity</span></li>
+        <li id="stage3"><span>Sort — rank by descending score</span></li>
+        <li id="stage4"><span>Filter — return top 3</span></li>
+      </ul>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label">02 — MATCHED ROLES</div>
+      <div id="results">
+        <div class="empty-state">No results yet. Add skills on the left and run the match.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-strip">
+    <span>roles_skills.csv · 160 roles indexed</span>
+    <span>engine: tf-idf + cosine similarity</span>
+  </div>
+</div>
+
+<script>
+// ---------------------------------------------------------------
+// DATA: mirrors roles_skills.csv (104 tech + 56 design roles)
+// ---------------------------------------------------------------
+const DATASET = [
+  { role: 'Data Scientist', skills: 'Python SQL Machine Learning Statistics Pandas NumPy Data Visualization Jupyter' },
+  { role: 'DevOps Engineer', skills: 'AWS Docker Kubernetes CI/CD Automation Linux Terraform Jenkins' },
+  { role: 'Backend Developer', skills: 'Java Python SQL APIs Node.js Databases System Design REST' },
+  { role: 'Frontend Developer', skills: 'HTML CSS JavaScript React UI Design Responsive Design Accessibility' },
+  { role: 'Cloud Architect', skills: 'AWS Azure Cloud Computing Networking Security Automation Terraform Cost Optimization' },
+  { role: 'Machine Learning Engineer', skills: 'Python Machine Learning TensorFlow PyTorch Data Pipelines MLOps Statistics' },
+  { role: 'Cybersecurity Analyst', skills: 'Network Security Penetration Testing Linux Firewalls Risk Assessment Python Cryptography' },
+  { role: 'Mobile App Developer', skills: 'Java Kotlin Swift Mobile UI APIs Android iOS Firebase' },
+  { role: 'Database Administrator', skills: 'SQL Database Design Indexing Backup Recovery Performance Tuning Oracle PostgreSQL' },
+  { role: 'Full Stack Developer', skills: 'JavaScript React Node.js SQL APIs HTML CSS System Design' },
+  { role: 'UI/UX Designer', skills: 'UI Design Wireframing Figma User Research Prototyping Accessibility Visual Design' },
+  { role: 'System Administrator', skills: 'Linux Networking Automation Scripting Bash Server Management Security' },
+  { role: 'Network Engineer', skills: 'Networking Routing Switching Firewalls Security Cisco Automation' },
+  { role: 'QA Automation Engineer', skills: 'Python Selenium Test Automation CI/CD Java Test Planning Debugging' },
+  { role: 'Data Engineer', skills: 'Python SQL Data Pipelines ETL Cloud Computing Spark Airflow Databases' },
+  { role: 'AI Research Scientist', skills: 'Python Deep Learning PyTorch TensorFlow Research Papers Mathematics Statistics Linear Algebra' },
+  { role: 'NLP Engineer', skills: 'Python NLP Transformers PyTorch Text Processing Machine Learning Linguistics' },
+  { role: 'Computer Vision Engineer', skills: 'Python OpenCV Deep Learning CNN Image Processing PyTorch TensorFlow' },
+  { role: 'Site Reliability Engineer', skills: 'Linux Kubernetes Monitoring Automation Python Incident Management Cloud Computing' },
+  { role: 'Platform Engineer', skills: 'Kubernetes Docker CI/CD Automation Cloud Computing Terraform Infrastructure as Code' },
+  { role: 'Blockchain Developer', skills: 'Solidity Ethereum Smart Contracts Cryptography Web3 JavaScript Blockchain Architecture' },
+  { role: 'Game Developer', skills: 'C++ Unity Unreal Engine C# Game Design 3D Graphics Physics Engines' },
+  { role: 'Embedded Systems Engineer', skills: 'C C++ Microcontrollers RTOS Firmware Circuit Design Debugging' },
+  { role: 'Solutions Architect', skills: 'Cloud Computing System Design AWS Azure Networking Security Cost Optimization' },
+  { role: 'Data Analyst', skills: 'SQL Excel Python Data Visualization Statistics Reporting Power BI Tableau' },
+  { role: 'Business Intelligence Developer', skills: 'SQL Power BI Tableau Data Warehousing ETL Data Modeling Reporting' },
+  { role: 'Big Data Engineer', skills: 'Hadoop Spark Scala Python SQL Data Pipelines Kafka Cloud Computing' },
+  { role: 'IT Support Specialist', skills: 'Troubleshooting Networking Windows Linux Hardware Customer Service Ticketing Systems' },
+  { role: 'IT Project Manager', skills: 'Project Management Agile Scrum Budgeting Risk Management Stakeholder Communication' },
+  { role: 'Scrum Master', skills: 'Agile Scrum Facilitation Sprint Planning Stakeholder Management Jira Coaching' },
+  { role: 'Product Manager', skills: 'Roadmapping Market Research Agile Stakeholder Management Analytics Prioritization' },
+  { role: 'Technical Writer', skills: 'Documentation Technical Writing Markdown API Documentation Editing Communication' },
+  { role: 'Release Manager', skills: 'CI/CD Automation Version Control Deployment Risk Management Coordination' },
+  { role: 'Software Architect', skills: 'System Design Design Patterns Java Python Scalability Microservices API Design' },
+  { role: 'API Developer', skills: 'REST GraphQL Node.js Python Authentication Documentation System Design' },
+  { role: 'Salesforce Developer', skills: 'Apex Salesforce Visualforce SOQL Lightning Components Integration' },
+  { role: 'SAP Consultant', skills: 'SAP ABAP Business Processes Configuration Integration ERP' },
+  { role: 'ERP Specialist', skills: 'ERP Systems Business Analysis SQL Process Design Integration Reporting' },
+  { role: 'Robotic Process Automation Developer', skills: 'RPA UiPath Automation Anywhere Python Process Analysis Scripting' },
+  { role: 'IT Auditor', skills: 'Risk Assessment Compliance Security Auditing Standards SQL Reporting' },
+  { role: 'Penetration Tester', skills: 'Ethical Hacking Network Security Python Kali Linux Vulnerability Assessment Reporting' },
+  { role: 'Security Operations Analyst', skills: 'SIEM Incident Response Network Security Threat Detection Linux Scripting' },
+  { role: 'Cloud Security Engineer', skills: 'AWS Azure Security Compliance IAM Encryption Networking Automation' },
+  { role: 'Identity and Access Management Engineer', skills: 'IAM Active Directory Security SSO Authentication Compliance Scripting' },
+  { role: 'Data Privacy Officer', skills: 'GDPR Compliance Risk Assessment Data Governance Policy Writing Auditing' },
+  { role: 'Growth Hacker', skills: 'Analytics A/B Testing SQL Marketing Automation Python SEO' },
+  { role: 'SEO Specialist', skills: 'SEO Keyword Research Analytics Content Strategy Google Search Console Link Building' },
+  { role: 'Digital Marketing Analyst', skills: 'Analytics Google Ads SEO SQL Excel Reporting Campaign Management' },
+  { role: 'E-commerce Manager', skills: 'E-commerce Platforms Analytics Inventory Management Digital Marketing SEO' },
+  { role: 'CRM Administrator', skills: 'Salesforce HubSpot Data Management Automation Reporting Configuration' },
+  { role: 'Technical Support Engineer', skills: 'Troubleshooting Networking Linux Customer Communication Scripting Ticketing Systems' },
+  { role: 'Firmware Engineer', skills: 'C C++ Embedded Systems Debugging Hardware Interfaces RTOS' },
+  { role: 'Hardware Engineer', skills: 'Circuit Design PCB Design Embedded Systems Testing Debugging Schematics' },
+  { role: 'Robotics Engineer', skills: 'Python C++ ROS Control Systems Sensors Mechanical Design' },
+  { role: 'Automation Test Engineer', skills: 'Selenium Python Java Test Automation CI/CD Debugging Test Planning' },
+  { role: 'Performance Test Engineer', skills: 'JMeter Load Testing Python Performance Tuning Scripting Analysis' },
+  { role: 'Release Engineer', skills: 'CI/CD Jenkins Automation Version Control Deployment Scripting' },
+  { role: 'Infrastructure Engineer', skills: 'Linux Networking Automation Cloud Computing Terraform Monitoring' },
+  { role: 'Storage Engineer', skills: 'SAN NAS Backup Recovery Linux Networking Storage Systems' },
+  { role: 'Virtualization Engineer', skills: 'VMware Hyper-V Virtualization Networking Automation Storage' },
+  { role: 'Data Warehouse Engineer', skills: 'SQL ETL Data Modeling Data Warehousing Cloud Computing Reporting' },
+  { role: 'Analytics Engineer', skills: 'SQL dbt Data Modeling Python Data Pipelines Cloud Computing' },
+  { role: 'MLOps Engineer', skills: 'Python Docker Kubernetes CI/CD Machine Learning Model Deployment Monitoring' },
+  { role: 'Data Governance Analyst', skills: 'Data Governance Compliance SQL Metadata Management Policy Writing' },
+  { role: 'Statistician', skills: 'Statistics R Python Data Analysis Hypothesis Testing Reporting' },
+  { role: 'Quantitative Analyst', skills: 'Python R Statistics Financial Modeling Mathematics Data Analysis' },
+  { role: 'Actuarial Analyst', skills: 'Statistics Excel Risk Modeling Mathematics Insurance Analysis' },
+  { role: 'Bioinformatics Analyst', skills: 'Python R Statistics Genomics Data Analysis Biology' },
+  { role: 'Research Data Analyst', skills: 'Python R Statistics Data Cleaning Reporting Research Methods' },
+  { role: 'Web Developer', skills: 'HTML CSS JavaScript PHP MySQL Responsive Design Version Control' },
+  { role: 'WordPress Developer', skills: 'WordPress PHP HTML CSS JavaScript MySQL Plugin Development' },
+  { role: 'Shopify Developer', skills: 'Shopify Liquid JavaScript HTML CSS E-commerce API Integration' },
+  { role: 'Magento Developer', skills: 'Magento PHP MySQL E-commerce API Integration Debugging' },
+  { role: 'Odoo Developer', skills: 'Odoo Python PostgreSQL ERP Customization Integration' },
+  { role: 'Django Developer', skills: 'Python Django PostgreSQL REST APIs System Design Testing' },
+  { role: 'Flask Developer', skills: 'Python Flask SQL REST APIs System Design Testing' },
+  { role: 'Laravel Developer', skills: 'PHP Laravel MySQL REST APIs MVC Architecture Testing' },
+  { role: 'Ruby on Rails Developer', skills: 'Ruby Rails SQL REST APIs MVC Architecture Testing' },
+  { role: '.NET Developer', skills: 'C# .NET SQL Server REST APIs System Design Azure' },
+  { role: 'Golang Developer', skills: 'Go Concurrency APIs System Design Microservices Testing' },
+  { role: 'Rust Developer', skills: 'Rust Systems Programming Memory Safety Performance Optimization Testing' },
+  { role: 'C++ Developer', skills: 'C++ Object Oriented Programming Data Structures Algorithms Debugging Performance' },
+  { role: 'Java Developer', skills: 'Java Spring Boot SQL APIs Object Oriented Programming System Design' },
+  { role: 'Kotlin Developer', skills: 'Kotlin Android SQL APIs Mobile UI Testing' },
+  { role: 'Swift Developer', skills: 'Swift iOS Xcode Mobile UI APIs Testing' },
+  { role: 'Flutter Developer', skills: 'Dart Flutter Mobile UI APIs Cross Platform Development Testing' },
+  { role: 'React Native Developer', skills: 'JavaScript React Native Mobile UI APIs Cross Platform Development' },
+  { role: 'Xamarin Developer', skills: 'C# Xamarin Mobile UI APIs Cross Platform Development' },
+  { role: 'Video Game QA Tester', skills: 'Test Planning Debugging Bug Tracking Game Design Communication' },
+  { role: 'Technical Recruiter', skills: 'Sourcing Communication Technical Screening Interviewing ATS Networking' },
+  { role: 'Chief Information Officer', skills: 'Strategic Planning IT Governance Leadership Budgeting Risk Management' },
+  { role: 'Chief Technology Officer', skills: 'Technical Strategy Leadership System Design Architecture Innovation' },
+  { role: 'IT Consultant', skills: 'System Analysis Consulting Project Management Communication Technical Strategy' },
+  { role: 'Data Center Technician', skills: 'Hardware Networking Server Management Troubleshooting Maintenance' },
+  { role: 'Voice/VoIP Engineer', skills: 'VoIP Networking SIP Telephony Systems Troubleshooting Automation' },
+  { role: 'Unified Communications Engineer', skills: 'VoIP Networking Video Conferencing Systems Troubleshooting Automation' },
+  { role: 'Enterprise Architect', skills: 'System Design Business Analysis Cloud Computing Integration Strategy' },
+  { role: 'Integration Engineer', skills: 'APIs Middleware ETL System Design Automation Testing' },
+  { role: 'Configuration Manager', skills: 'Version Control Automation Documentation Change Management Scripting' },
+  { role: 'IT Compliance Analyst', skills: 'Compliance Auditing Risk Assessment Documentation Policy Writing' },
+  { role: 'Digital Forensics Analyst', skills: 'Forensics Security Incident Response Evidence Analysis Reporting' },
+  { role: 'Threat Intelligence Analyst', skills: 'Threat Analysis Security Research Python Reporting Risk Assessment' },
+  { role: 'Malware Analyst', skills: 'Reverse Engineering Malware Analysis Python Assembly Security Research' },
+  { role: 'Application Security Engineer', skills: 'Secure Coding Penetration Testing Python Vulnerability Assessment Code Review' },
+  { role: 'Graphic Designer', skills: 'Photoshop Illustrator InDesign Typography Branding Layout Design Color Theory' },
+  { role: 'Photoshop Expert', skills: 'Photoshop Photo Editing Retouching Compositing Color Correction Layer Masking' },
+  { role: 'Poster Designer', skills: 'Photoshop Illustrator Typography Layout Design Color Theory Print Design' },
+  { role: 'Home Designer', skills: 'Interior Design Space Planning AutoCAD SketchUp Furniture Layout Color Coordination' },
+  { role: 'Interior Designer', skills: 'Space Planning AutoCAD SketchUp 3D Modeling Material Selection Lighting Design' },
+  { role: 'Fashion Designer', skills: 'Sketching Pattern Making Textile Knowledge Adobe Illustrator Trend Research Sewing' },
+  { role: 'Industrial Designer', skills: 'Sketching 3D Modeling CAD Prototyping Product Design Material Knowledge' },
+  { role: 'Product Designer', skills: 'UI Design Wireframing Figma Prototyping User Research Design Systems' },
+  { role: 'Illustrator', skills: 'Illustrator Procreate Digital Painting Sketching Character Design Color Theory' },
+  { role: 'Logo Designer', skills: 'Illustrator Photoshop Typography Branding Vector Graphics Concept Development' },
+  { role: 'Brand Identity Designer', skills: 'Branding Typography Illustrator Photoshop Style Guides Visual Strategy' },
+  { role: 'Motion Graphics Designer', skills: 'After Effects Premiere Pro Animation Compositing Storyboarding Video Editing' },
+  { role: '3D Artist', skills: 'Blender Maya ZBrush Texturing Lighting Rendering Modeling' },
+  { role: '3D Animator', skills: 'Maya Blender Rigging Animation Keyframing Storyboarding Rendering' },
+  { role: 'Video Editor', skills: 'Premiere Pro Final Cut Pro Color Grading Sound Editing Storytelling Motion Graphics' },
+  { role: 'Photo Retoucher', skills: 'Photoshop Lightroom Color Correction Skin Retouching Compositing Detail Editing' },
+  { role: 'Photographer', skills: 'Camera Operation Lighting Composition Lightroom Photoshop Editing' },
+  { role: 'Web Designer', skills: 'Figma Adobe XD HTML CSS Responsive Design Typography Visual Design' },
+  { role: 'Packaging Designer', skills: 'Illustrator Photoshop Print Design Branding Structural Design Typography' },
+  { role: 'Textile Designer', skills: 'Pattern Design Illustrator Photoshop Color Theory Fabric Knowledge Print Design' },
+  { role: 'Jewelry Designer', skills: 'Sketching CAD 3D Modeling Gemology Metalwork Rendering' },
+  { role: 'Landscape Designer', skills: 'AutoCAD SketchUp Plant Knowledge Site Planning 3D Rendering Sustainability' },
+  { role: 'Set Designer', skills: 'Sketching Model Making Space Planning Lighting Design Construction Knowledge' },
+  { role: 'Exhibition Designer', skills: 'Space Planning 3D Modeling AutoCAD Lighting Design Branding Visual Storytelling' },
+  { role: 'Game Artist', skills: 'Photoshop Blender 3D Modeling Texturing Concept Art Character Design' },
+  { role: 'Concept Artist', skills: 'Digital Painting Photoshop Procreate Sketching Environment Design Character Design' },
+  { role: 'Character Designer', skills: 'Sketching Digital Painting Anatomy Photoshop Procreate Storytelling' },
+  { role: 'Storyboard Artist', skills: 'Sketching Storytelling Photoshop Cinematography Sequential Art' },
+  { role: 'Print Designer', skills: 'InDesign Illustrator Typography Layout Design Color Theory Print Production' },
+  { role: 'Magazine Layout Designer', skills: 'InDesign Typography Layout Design Photo Editing Branding Print Production' },
+  { role: 'Book Cover Designer', skills: 'Photoshop Illustrator Typography Concept Development Print Design Branding' },
+  { role: 'Wedding Card Designer', skills: 'Photoshop Illustrator Typography Layout Design Print Design Creativity' },
+  { role: 'Social Media Graphics Designer', skills: 'Photoshop Canva Illustrator Typography Branding Content Creation' },
+  { role: 'Presentation Designer', skills: 'PowerPoint Keynote Layout Design Data Visualization Typography Branding' },
+  { role: 'Infographic Designer', skills: 'Illustrator Photoshop Data Visualization Layout Design Typography Storytelling' },
+  { role: 'Tattoo Designer', skills: 'Sketching Illustration Line Art Photoshop Creativity Custom Design' },
+  { role: 'Mehendi/Henna Designer', skills: 'Freehand Drawing Pattern Design Creativity Fine Motor Skills Cultural Knowledge' },
+  { role: 'Event Decor Designer', skills: 'Space Planning Theme Design Color Coordination Vendor Coordination Creativity' },
+  { role: 'Furniture Designer', skills: 'Sketching CAD 3D Modeling Material Knowledge Prototyping Ergonomics' },
+  { role: 'Automotive Designer', skills: 'Sketching CAD 3D Modeling Clay Modeling Rendering Aerodynamics Knowledge' },
+  { role: 'Toy Designer', skills: 'Sketching 3D Modeling Prototyping Material Knowledge Safety Standards Creativity' },
+  { role: 'Sound Designer', skills: 'Audio Editing Foley Ableton Live Pro Tools Mixing Sound Effects Creation' },
+  { role: 'Lighting Designer', skills: 'Lighting Design AutoCAD Theatrical Lighting Software Color Theory Space Planning' },
+  { role: 'Environment Artist', skills: 'Blender Maya Texturing Level Design Lighting World Building' },
+  { role: 'UX Researcher', skills: 'User Research Interviews Usability Testing Data Analysis Prototyping Personas' },
+  { role: 'Visual Designer', skills: 'Photoshop Illustrator Figma Typography Layout Design Branding' },
+  { role: 'Design Systems Designer', skills: 'Figma Design Systems Component Libraries Typography Documentation Collaboration' },
+  { role: 'Calligrapher', skills: 'Hand Lettering Typography Ink Techniques Composition Creativity' },
+  { role: 'Muralist', skills: 'Painting Sketching Large Scale Composition Color Theory Creativity' },
+  { role: 'Home Decor Consultant', skills: 'Color Coordination Furniture Selection Space Planning Client Communication Trend Research' },
+  { role: 'Kitchen Designer', skills: 'Space Planning AutoCAD 3D Modeling Material Selection Ergonomics Client Communication' },
+  { role: 'Wallpaper Designer', skills: 'Pattern Design Illustrator Photoshop Color Theory Repeat Design Print Production' },
+  { role: 'Ceramic Designer', skills: 'Sketching Sculpting Glazing Techniques Material Knowledge Creativity' },
+  { role: 'Costume Designer', skills: 'Sketching Pattern Making Textile Knowledge Sewing Historical Research Creativity' },
+  { role: 'Make-up Artist / Design', skills: 'Color Theory Skin Knowledge Application Techniques Creativity Client Consultation' },
+  { role: 'NFT/Digital Artist', skills: 'Digital Painting Photoshop Procreate Blockchain Basics Concept Development Creativity' },];
+
+// ---------------------------------------------------------------
+// TF-IDF + COSINE SIMILARITY (vanilla JS, no dependencies)
+// ---------------------------------------------------------------
+function tokenize(str){
+  return str.toLowerCase().match(/[a-z0-9\.\+\#\/]+/g) || [];
+}
+
+function buildVocabulary(docs){
+  const vocab = new Set();
+  docs.forEach(d => tokenize(d).forEach(t => vocab.add(t)));
+  return Array.from(vocab);
+}
+
+function computeIdf(docs, vocab){
+  const idf = {};
+  const N = docs.length;
+  vocab.forEach(term => {
+    const df = docs.filter(d => tokenize(d).includes(term)).length;
+    idf[term] = Math.log((N + 1) / (df + 1)) + 1; // smoothed idf
+  });
+  return idf;
+}
+
+function tfidfVector(doc, vocab, idf){
+  const tokens = tokenize(doc);
+  const total = tokens.length || 1;
+  return vocab.map(term => {
+    const tf = tokens.filter(t => t === term).length / total;
+    return tf * idf[term];
+  });
+}
+
+function cosineSimilarity(a, b){
+  let dot = 0, magA = 0, magB = 0;
+  for(let i=0;i<a.length;i++){
+    dot += a[i]*b[i];
+    magA += a[i]*a[i];
+    magB += b[i]*b[i];
+  }
+  if(magA === 0 || magB === 0) return 0;
+  return dot / (Math.sqrt(magA) * Math.sqrt(magB));
+}
+
+function runRecommendation(userSkills){
+  const corpus = DATASET.map(d => d.skills);
+  const vocab = buildVocabulary(corpus);
+  const idf = computeIdf(corpus, vocab);
+
+  const itemVectors = DATASET.map(d => tfidfVector(d.skills, vocab, idf));
+  const userVector = tfidfVector(userSkills.join(" "), vocab, idf);
+
+  const scored = DATASET.map((d, i) => ({
+    role: d.role,
+    skills: d.skills,
+    score: cosineSimilarity(userVector, itemVectors[i])
+  }));
+
+  scored.sort((a,b) => b.score - a.score);
+  return scored.slice(0, 3);
+}
+
+// ---------------------------------------------------------------
+// UI WIRING
+// ---------------------------------------------------------------
+const skillInput = document.getElementById('skillInput');
+const addBtn = document.getElementById('addBtn');
+const chipsEl = document.getElementById('chips');
+const hintEl = document.getElementById('hint');
+const runBtn = document.getElementById('runBtn');
+const resultsEl = document.getElementById('results');
+
+let skills = [];
+
+function renderChips(){
+  chipsEl.innerHTML = '';
+  skills.forEach((s, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.innerHTML = `<span>${s}</span>`;
+    const rm = document.createElement('button');
+    rm.textContent = '×';
+    rm.onclick = () => { skills.splice(i,1); renderChips(); };
+    chip.appendChild(rm);
+    chipsEl.appendChild(chip);
+  });
+  const remaining = Math.max(0, 3 - skills.length);
+  hintEl.textContent = remaining > 0
+    ? `Add ${remaining} more skill${remaining > 1 ? 's' : ''} to run a match.`
+    : `${skills.length} skills ready.`;
+  runBtn.disabled = skills.length < 3;
+}
+
+function addSkill(){
+  const val = skillInput.value.trim();
+  if(!val) return;
+  skills.push(val);
+  skillInput.value = '';
+  renderChips();
+  skillInput.focus();
+}
+
+addBtn.onclick = addSkill;
+skillInput.addEventListener('keydown', e => {
+  if(e.key === 'Enter'){ e.preventDefault(); addSkill(); }
+});
+
+function setStage(n){
+  for(let i=1;i<=4;i++){
+    document.getElementById('stage'+i).classList.toggle('active', i<=n);
+  }
+}
+
+function highlightMatches(itemSkills, userSkills){
+  const userLower = userSkills.map(s => s.toLowerCase());
+  return itemSkills.split(' ').map(word => {
+    const isMatch = userLower.some(u => word.toLowerCase().includes(u) || u.includes(word.toLowerCase()));
+    return isMatch ? `<mark>${word}</mark>` : word;
+  }).join(' ');
+}
+
+runBtn.onclick = () => {
+  setStage(1);
+  setTimeout(() => setStage(2), 150);
+  setTimeout(() => setStage(3), 300);
+  setTimeout(() => setStage(4), 450);
+
+  setTimeout(() => {
+    const top = runRecommendation(skills);
+    resultsEl.innerHTML = '';
+
+    if(top[0].score === 0){
+      const note = document.createElement('div');
+      note.className = 'empty-state';
+      note.textContent = 'No overlap found — showing closest available roles from the dataset (cold-start fallback).';
+      resultsEl.appendChild(note);
+    }
+
+    top.forEach((r, i) => {
+      const pct = (r.score * 100).toFixed(1);
+      const row = document.createElement('div');
+      row.className = 'result-row';
+      row.innerHTML = `
+        <div class="result-top">
+          <div><span class="result-rank">0${i+1}</span><span class="result-role">${r.role}</span></div>
+          <div class="result-score">${pct}%</div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:0%"></div></div>
+        <div class="result-skills">${highlightMatches(r.skills, skills)}</div>
+      `;
+      resultsEl.appendChild(row);
+      requestAnimationFrame(() => {
+        row.querySelector('.bar-fill').style.width = pct + '%';
+      });
+    });
+  }, 600);
+};
+
+renderChips();
+</script>
+
+</body>
+</html>
