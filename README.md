@@ -61,16 +61,71 @@ The recommendation engine strictly follows the **Input–Process–Output (IPO)*
 
 ## 📊 Dataset Format (`raw skills.csv`)
 
-Ensure your CSV file is placed in the project root with the following format:
+Programming Languages & Core Tech
+Python, SQL, R, Java, C, C++, C#, JavaScript, PHP, Ruby, Go, Rust, Kotlin, Swift, Dart, Scala, MATLAB, Solidity, Apex, ABAP
 
-```csv
-Role,Required_Skills
-Data Scientist,Python SQL Machine Learning Statistics Pandas NumPy Data Visualization Jupyter
-DevOps Engineer,AWS Docker Kubernetes CI/CD Automation Linux Terraform Jenkins
-Backend Developer,Java Python SQL APIs Node.js Databases System Design REST
-Frontend Developer,HTML CSS JavaScript React UI Design Responsive Design Accessibility
-UI/UX Designer,UI Design Wireframing Figma User Research Prototyping Accessibility Visual Design
-```
+Frameworks & Libraries
+TensorFlow, PyTorch, Pandas, NumPy, Django, Flask, Laravel, Rails, Spring Boot, React, React Native, Node.js, .NET, Xamarin, Flutter, Selenium
+
+Data Science / AI / ML
+Machine Learning, Deep Learning, Statistics, Data Visualization, Jupyter, Data Pipelines, MLOps, Research, Research Papers, Mathematics, Linear Algebra, Publications, NLP, Transformers, Text Processing, Linguistics, OpenCV, Image Processing, CNN, Computer Vision, Data Analysis, Probability, Experimental Design, Hypothesis Testing, Bioinformatics Tools, Genomics, Biology, Data Cleaning, Research Methods, Research Methodology, Model Deployment, Analytics
+
+Data Engineering
+ETL, Data Pipelines, Cloud Computing, Data Warehousing, DAX, Data Modeling, Databases, Hadoop, Spark, Kafka, Airflow, dbt, Database Design, Indexing, Backup Recovery, Performance Tuning, Oracle, PostgreSQL, SQL Server, Storage Systems, SAN, NAS
+
+Web & Backend Development
+HTML, CSS, APIs, REST, GraphQL, System Design, Design Patterns, Scalability, Microservices, API Design, Authentication, Middleware, System Integration, MVC Architecture, Concurrency, Systems Programming, Memory Safety, Performance Optimization, Object Oriented Programming, Data Structures, Algorithms, Testing, Version Control, WordPress, Plugin Development, MySQL, Shopify, Liquid, E-commerce, API Integration, Magento, Odoo, ERP Customization, ERP Systems, ERP, Xcode, Cross Platform Development
+
+Cloud, DevOps & Infrastructure
+AWS, Azure, Networking, Security, Automation, Terraform, Cost Optimization, Docker, Kubernetes, CI/CD, Linux, Jenkins, Monitoring, Incident Response, Incident Management, SRE Practices, Infrastructure as Code, Scripting, Bash, Server Management, Windows Server, Active Directory, PowerShell, VMware, Hyper-V, Virtualization, Hypervisors, Storage, Build Systems, Deployment, RPA, UiPath, Automation Anywhere, Workflow Design, Process Automation, Process Analysis, Configuration Management, Change Management
+
+Cybersecurity
+Network Security, Penetration Testing, Firewalls, Risk Assessment, Cryptography, Cloud Security, SIEM, Threat Detection, Log Analysis, IAM, Encryption, SSO, Authentication Protocols, Cisco, Routing, Switching, Ethical Hacking, Vulnerability Assessment, Kali Linux, Forensics, Evidence Analysis, Threat Analysis, Security Research, Reverse Engineering, Malware Analysis, Assembly, Secure Coding, Code Review, Compliance, Auditing, IT Governance, Strategic Planning
+
+Mobile, Embedded & Hardware
+Mobile UI, Android, iOS, Firebase, Microcontrollers, RTOS, Firmware, Embedded Systems, Hardware Debugging, Hardware Interfaces, Circuit Design, PCB Design, Schematics, ROS, Control Systems, Sensors, Mechanical Design, Robotics, IoT, MQTT
+
+Testing/QA
+Test Automation, Test Planning, Manual Testing, Test Cases, Bug Tracking, Load Testing, Performance Tuning, JMeter, Quality Assurance, Localization, Internationalization
+
+Design & UX
+UI Design, Wireframing, Figma, Adobe XD, User Research, Prototyping, Accessibility, Visual Design, Usability Testing, Surveys, Personas, Interviews, UX Writing, Content Strategy, Microcopy, Interaction Design, User Flows, Usability, Design Systems, Component Libraries
+
+Graphic / Print / Visual Design
+Graphic Design, Adobe Photoshop, Illustrator, InDesign, Typography, Color Theory, Branding, Layout Design, Retouching, Compositing, Color Correction, Layer Masking, Print Design, Print Production, Prepress, Vector Graphics, Concept Development, Style Guides, Visual Strategy, Brand Identity, Logo Design, Visual Identity, Packaging Design, Structural Design, Pattern Design, Fabric Knowledge, Repeat Design, Photo Editing, Canva, Content Creation, PowerPoint, Keynote, Line Art, Custom Design, Freehand Drawing, Fine Motor Skills, Cultural Knowledge
+
+Fashion / Costume / Set / Interior
+Fashion Design, Sketching, Pattern Making, Textile Knowledge, Trend Research, Sewing, Historical Research, Costume Design, Set Design, Scale Modeling, Model Making, Construction Knowledge, Spatial Planning, Exhibit Design, Fabrication Knowledge, Theme Design, Vendor Coordination, Industrial Design, CAD, Ergonomics, Materials Knowledge, Interior Design, Space Planning, AutoCAD, SketchUp, 3D Rendering, Material Selection, Lighting Design, Furniture Selection, Client Communication, Landscape Design, Plant Knowledge, Site Planning, Sustainability, Jewelry Design, Gemology, Metalwork, Automotive Design, Clay Modeling, Aerodynamics Knowledge, Toy Design, Safety Standards, Ceramic Design, Sculpting, Glazing Techniques
+
+Art / Illustration / Animation
+Illustration, Drawing, Digital Painting, Concept Art, Storytelling, Storyboarding, Character Design, Environment Design, Anatomy, Cinematography, Sequential Art, Procreate, 3D Modeling, Texturing, Rendering, Lighting, Blender, Maya, ZBrush, Rigging, Animation, Character Animation, Keyframing, Timing, 2D Animation, 3D Animation, Adobe Animate, World Building, Level Design
+
+Video / Motion / Audio Production
+After Effects, Motion Design, Video Editing, Adobe Premiere Pro, Final Cut Pro, Color Grading, Sound Editing, Thumbnail Design, Pacing, Retention Optimization, Short Form Content, Captioning, Trend Awareness, Archival Research, Sound Design, Avid Media Composer, Marketing Awareness, DaVinci Resolve, Visual Effects, Nuke, 3D Tracking, Rotoscoping, Color Matching, Broadcast Graphics, Video Production, Title Design, Audio Editing, Audio Engineering, Mixing, Mastering, Pro Tools, Acoustics, Foley, Field Recording, Audio Recording, Signal Processing, Podcast Production, Adobe Audition, Music Production, DAW Software, Composition, Music Theory, Orchestration, Ableton Live, Sound Effects Creation, Post-Production Workflow, Team Coordination, Quality Control
+
+Photography
+Photography, Photo Editing, Lightroom, Composition, Camera Operation, Editing
+
+Management / Leadership
+Team Leadership, Mentoring, Product Strategy, Roadmapping, Stakeholder Management, Agile, Market Research, Communication, Project Planning, Scrum, Budgeting, Program Management, Cross-functional Coordination, Facilitation, Sprint Planning, Team Coaching, Conflict Resolution, Jira, Coaching, Requirements Gathering, Process Mapping, Project Coordination, Scheduling, Release Management, Coordination, Process Improvement, Technical Mentorship, Hiring, Engineering Leadership, Team Management, Technical Strategy, Architecture, Innovation, Technology Strategy, Leadership, Governance, Vendor Management, IT Strategy, Cybersecurity, Legal Knowledge, Policy Development, Policy Writing, GDPR, Data Privacy, Prioritization, Design Leadership, Stakeholder Communication, Consulting, System Analysis
+
+Finance / Legal
+Excel, Financial Modeling, Forecasting, Accounting, Valuation, Bookkeeping, Financial Reporting, Tax Preparation, Risk Analysis, Risk Management, Risk Modeling, Insurance Analysis, Actuarial Software, Economics, Econometrics, Legal Research, Contract Law, Negotiation, Case Management, Regulatory Compliance
+
+Marketing / Sales
+SEO, SEM, Content Marketing, Social Media, Google Analytics, Email Marketing, Copywriting, Keyword Research, Content Optimization, Link Building, Technical SEO, Editorial Planning, Social Media Strategy, Community Management, Segmentation, A/B Testing, Growth Hacking, Google Search Console, Google Ads, Campaign Management, Content Writing, Creative Writing, Brand Voice, Sales, CRM, Customer Relationship Management, Lead Generation, Technical Sales, Product Knowledge, Solution Design, Presentations, Upselling, Account Planning, Onboarding, Retention Strategies, Problem Solving, Customer Service, Ticketing Systems, E-commerce Platforms, Inventory Management, Digital Marketing, HubSpot
+
+HR
+Recruitment, Employee Relations, Performance Management, HR Policy, Sourcing, Interviewing, Employer Branding, Applicant Tracking Systems, Technical Screening, ATS, Curriculum Design, Training Delivery, Needs Assessment
+
+Operations / Supply Chain
+Operations Management, Logistics, Supply Chain Management, Supply Chain Coordination, Procurement, Contract Management
+
+Healthcare
+Healthcare Systems, Clinical Trials, Data Management, Biomechanics, Medical Devices
+
+Networking / Telecom
+VoIP, SIP, Telephony Systems, Video Conferencing, Cabling, Cooling Systems, Maintenance, Hardware, Troubleshooting, Wireless Networking, RF Engineering, Telecom Protocols
 
 ---
 
